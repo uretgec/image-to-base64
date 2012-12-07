@@ -1,7 +1,11 @@
 Image to Base64 - I2Base64
 =============
 
-Simpel Image to Base64 function for your web project and website.
+Simple Image to Base64 function for your web project and website. There is no configration file.
+
+* Generate base64 code of image use file_get_contents function
+* Find image mime type use finfo class.
+* Output: image base64 code - img html code -  image base64 background css code
 
 	$base64 = new imagebase64();
 	// Generate Base64 Code
