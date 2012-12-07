@@ -7,6 +7,8 @@ Simple Image to Base64 function for your web project and website. There is no co
 * Find image mime type use finfo class.
 * Output: image base64 code - img html code -  image base64 background css code
 
+Using:
+
 	$base64 = new imagebase64();
 	// Generate Base64 Code
 	echo $base64->get_base64('http://i.imgur.com/sPU9A.png');
