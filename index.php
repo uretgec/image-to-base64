@@ -46,13 +46,14 @@ class imagebase64 {
 		}
 	}
 }
+$image_url = 'http://i.imgur.com/sPU9A.png';
 $base64 = new imagebase64();
 // Generate Base64 Code
-echo $base64->get_base64('http://i.imgur.com/sPU9A.png');
+echo $base64->get_base64($image_url);
 // Image html inside
-echo $base64->base64_image_html('http://i.imgur.com/sPU9A.png');
+echo $base64->base64_image_html($image_url);
 // CSS code inside
-echo $base64->base64_image_css('http://i.imgur.com/sPU9A.png');
+echo $base64->base64_image_css($image_url);
 
 /********************
 Simple code type
