@@ -22,7 +22,8 @@ NOTE: Php 5.3.0+ requirement and activate extension=php_fileinfo.dll in php.ini 
 
 TODO (2015-03-26)
 -----
-- Re write class
+- Re write class (OK)
+- Exception Add
 - json response (ajax request return)
 - img: size, width-height, url or local file, generate new short url, base64 url with code and style print
 - Toggle base64 index.html

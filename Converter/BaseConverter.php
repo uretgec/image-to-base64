@@ -10,7 +10,6 @@
 namespace ImageBase\Converter;
 
 
-use ImageBase\Enum\DownloadType;
 use ImageBase\Enum\OutputType;
 use ImageBase\Enum\PathType;
 
@@ -18,18 +17,19 @@ class BaseConverter
 {
 	public $_file; // file url or full path in local folder
 	public $_data; // Curl or File Get Content this $_file
-	public $_image; // Base64 encode or decode result
+	public $_base64; // Base64 encode or decode result
+	public $_image; // Image file (Base64 or real)
 	public $_pathType;
 	public $_outputType;
 	public $_path;
-	public $_downloadType;
+	public $_mimeType;
 
-	public function __construct($file, $pathType = PathType::URL, $outputType = OutputType::RAW, $downloadType = DownloadType::FGET)
+
+	public function __construct($file, $pathType = PathType::URL, $outputType = OutputType::RAW)
 	{
 		$this->_file 					= $file;
 		$this->_pathType 			= $pathType;
 		$this->_outputType 		= $outputType;
-		$this->_downloadType 	= $downloadType;
 	}
 
 	public function setFile($file)
@@ -56,9 +56,16 @@ class BaseConverter
 		return $this->_data;
 	}
 
-	public function setImage($image)
+	/*
+	 * Schema
+	 * data:[<mime type>][;charset=<charset>][;base64],<encoded data>
+	 * */
+	public function setImage($image = null)
 	{
-		$this->_image = $image;
+		if($image !== null)
+			$this->_image = $image;
+		else
+			$this->_image = 'data:'.$this->getMimeType().';base64,'.$this->getBase64Encode();
 
 		return $this;
 	}
@@ -70,14 +77,14 @@ class BaseConverter
 
 	public function setBase64Encode()
 	{
-		$this->_image = base64_decode($this->_data);
+		$this->_base64 = base64_encode($this->getData());
 
 		return $this;
 	}
 
 	public function getBase64Encode()
 	{
-			return $this->_image;
+			return $this->_base64;
 	}
 
 	public function setPathType($pathType)
@@ -116,16 +123,16 @@ class BaseConverter
 		return $this->_path;
 	}
 
-	public function setDowloadType($downloadType)
+	public function setMimeType($mimeType)
 	{
-		$this->_downloadType = $downloadType;
+		$this->_mimeType = $mimeType;
 
 		return $this;
 	}
 
-	public function getDowloadType()
+	public function getMimeType()
 	{
-		return $this->_downloadType;
+		return $this->_mimeType;
 	}
 
 	/*
@@ -145,58 +152,81 @@ class BaseConverter
 		return true;
 	}
 
-	public function downloadFile()
+	protected function downloadFile()
 	{
-		if(!array_key_exists($this->getDowloadType(),DownloadType::getList()))
-			$this->setDowloadType(DownloadType::FGET);
+		$data = $this->fileGetContent();
 
-		$data = false;
-		switch($this->getDowloadType())
-		{
-			case DownloadType::FGET:
-				$data = $this->fileGetContent();
-				break;
-			case DownloadType::FOPEN:
-				$data = $this->fOpen();
-				break;
-			case DownloadType::CURL:
-				$data = $this->fCurl();
-				break;
-		}
-
-		if($data)
+		if($data) {
 			$this->setData($data);
-		else
+			$this->setBase64Encode($data);
+		} else {
 			$this->setData(null);
+			$this->setBase64Encode(null);
+		}
 	}
 
 	protected function fileGetContent()
 	{
+		//if(!$this->isFile())
+			//return false;
+
 		return file_get_contents($this->getFile());
 	}
 
-	protected function fOpen()
+	protected function progress()
 	{
-		return false;
+		/*
+		 * Step by Step
+		 * Get $this->_data
+		 * Get fInfo or advanced class image info data
+		 * If use advanced class, will you inject Image Models into the class
+		 * Ready to getOutput()
+		 * Thats it
+		 * */
+		$this->downloadFile();
+		if($this->getData() === null)
+			return false;
+
+		$fInfo = new \finfo(FILEINFO_MIME_TYPE);
+		$mimeType = $fInfo->buffer($this->getData());
+		$this->setMimeType($mimeType);
+		$this->setImage();
+		return true;
 	}
 
-	protected function fCurl()
-	{
-		return false;
-	}
-
+	/*
+ * Final Function
+ */
 	public function getOutput()
 	{
-		switch($this->_outputType)
+
+		if(!$this->progress())
+			return null;
+
+		switch($this->getOutputType())
 		{
 			case OutputType::RAW:
+				return $this->getImage();
 				break;
 			case OutputType::HTML:
+				return '<img alt="Base64 Image" src="' . $this->getImage() . '" />';
 				break;
 			case OutputType::CSS:
+				return '.base64_image_code {background:url(' . $this->getImage() . ') no-repeat top left;}';
 				break;
 			case OutputType::INLINE:
+				return null;
+				break;
+			default:
+				return null;
 				break;
 		}
 	}
+
+	public function debug()
+	{
+		unset($this->_data);
+		var_dump($this);
+	}
+
 }

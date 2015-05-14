@@ -16,11 +16,10 @@ $url = 'http://www.ozhiker.com/electronics/pjmt/library/test.jpg';
 //$url = 'samples/sample_1.jpg';
 $get_image = file_get_contents($url);
 $img_base64 = base64_encode($get_image);
-$finfo = new \finfo();
+$finfo = new \finfo(FILEINFO_MIME_TYPE);
 $mime_type_image = $finfo->buffer($get_image);
-$mime_type_image2 = $finfo->file($url);
 echo '<br>1----<br>';
-var_dump($mime_type_image2);
+var_dump($mime_type_image);
 
 $size = getimagesize($url, $info);
 $size2 = exif_read_data($url);

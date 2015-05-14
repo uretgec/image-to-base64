@@ -9,7 +9,6 @@
 
 namespace ImageBase\Converter;
 
-
 class SimpleConverter extends BaseConverter
 {
 
