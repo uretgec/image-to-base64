@@ -11,7 +11,7 @@ Simple Image to Base64 function for your web project and website. There is no co
 * There are 5 Enum types
 * There are 2 Model for get the Exif and Image Properties
 
-Using Old Relase (init first_release.php):
+Using Old Release (init first_release.php):
 
 	$image_url = 'http://i.imgur.com/sPU9A.png';
 	$base64 = new imagebase64();
@@ -22,7 +22,7 @@ Using Old Relase (init first_release.php):
 	// CSS code inside
 	echo $base64->base64_image_css($image_url);
 	
-Using New Relase (simple.php):
+Using New Release (simple.php):
 
 	$image = 'http://i.imgur.com/sPU9A.png';
 	// Select Converter
