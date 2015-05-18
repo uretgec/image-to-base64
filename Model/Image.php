@@ -22,7 +22,7 @@ class Image
 		public $_mime_type;
 
 		/*
-		 * Image Dimention
+		 * Image Dimension
 		 * */
 		public $_imageWidth;
 		public $_imageHeight;

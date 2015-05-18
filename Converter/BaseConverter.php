@@ -145,8 +145,9 @@ class BaseConverter
 			$this->setPathType(PathType::URL);
 
 		/*File is URL*/
-		if(!file_exists($this->getFile()))
-			return false;
+		if($this->getPathType() == PathType::LOCAL)
+			if(!file_exists($this->getFile()))
+				return false;
 
 		/*File is LOCAL*/
 		return true;
@@ -167,8 +168,8 @@ class BaseConverter
 
 	protected function fileGetContent()
 	{
-		//if(!$this->isFile())
-			//return false;
+		if(!$this->isFile())
+			return false;
 
 		return file_get_contents($this->getFile());
 	}
@@ -212,7 +213,7 @@ class BaseConverter
 				return '<img alt="Base64 Image" src="' . $this->getImage() . '" />';
 				break;
 			case OutputType::CSS:
-				return '.base64_image_code {background:url(' . $this->getImage() . ') no-repeat top left;}';
+				return '.base64_image_code {background:url("' . $this->getImage() . '") no-repeat top left;}';
 				break;
 			case OutputType::INLINE:
 				return null;
@@ -223,6 +224,9 @@ class BaseConverter
 		}
 	}
 
+	/*
+	 * Debug Option
+	 * */
 	public function debug()
 	{
 		unset($this->_data);
